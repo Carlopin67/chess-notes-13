@@ -1,0 +1,2077 @@
+/* ============================================================
+   Ajedrez — hoja de estilos
+   Minimalista y suave, en escala de grises: grises tenues en vez de
+   blanco y negro puros, sin sombras ni relieves, esquinas amplias y
+   la letra redondeada de Apple. Lo único que llama la atención es la
+   tira de jugadas: una rueda con la jugada actual en el centro.
+   Dos estéticas sobre la misma base:
+   - Minimal: plana y suave.
+   - Liquid Glass: los controles flotan como el cristal de iOS 26.
+   ============================================================ */
+
+:root {
+  /* Superficies (claro) */
+  --bg:        #f4f4f4;
+  --bg-clear:  rgba(244,244,244,0);   /* el fondo, transparente: para los degradados */
+  --surface:   #ffffff;
+  --surface-2: #efefef;
+  --fill:      #ebebeb;
+  --fill-2:    #e0e0e0;
+  --separator: #ebebeb;
+  --overlay:   rgba(30,30,30,0.26);
+
+  /* Texto: negro suave, nunca puro */
+  --label:   #1f1f1f;
+  --label-2: #707070;
+  --label-3: #a9a9a9;
+
+  /* Lo elegido con fuerza (jugada actual, carpeta activa) */
+  --inverse:    #2c2c2c;
+  --on-inverse: #f6f6f6;
+  /* Lo elegido con suavidad (pastilla de los segmentados) */
+  --thumb:      #ffffff;
+
+  --switch-off: #e2e2e2;
+  --switch-on:  #2c2c2c;
+  --knob-off:   #ffffff;
+  --knob-on:    #ffffff;
+
+  /* Lo único en color de verdad: borrar. Rojo en todos los temas. */
+  --danger:      #d4372c;
+  --danger-fill: rgba(212,55,44,0.1);
+
+  /* Tablero */
+  --sq-light:  #e7e7e7;
+  --sq-dark:   #b5b5b5;
+  --mark-from: rgba(40,40,40,0.10);
+  --mark-to:   rgba(40,40,40,0.20);
+  --mark-sel:  rgba(40,40,40,0.26);
+  --legal:     rgba(40,40,40,0.30);
+  --coord:     #a9a9a9;
+  --eval-white: #fafafa;
+  --eval-black: #333333;
+  --eval-edge:  #dddddd;   /* en claro, la parte blanca necesita un borde */
+
+  /* Cristal (solo en la estética Liquid Glass) */
+  --glass-tint:     rgba(255,255,255,0.5);
+  --glass-tint-2:   rgba(250,250,250,0.78);
+  --glass-rim-hi:   rgba(255,255,255,1);
+  --glass-rim-lo:   rgba(255,255,255,0.3);
+  --glass-edge:     rgba(0,0,0,0.07);
+  --glass-shadow:   0 8px 26px rgba(0,0,0,0.11), 0 1px 3px rgba(0,0,0,0.07);
+  --glass-glow:     rgba(255,255,255,0.75);
+  --glass-thumb:    #ffffff;
+  --glass-switch-on: #2c2c2c;
+  --glass-solid:    #fafafa;   /* el color de la cápsula de cristal, sin transparencia */
+
+  /* La barra de estado del sistema escribe la hora en blanco, así que
+     en claro se le deja una franja oscura detrás para que se lea. */
+  --statusbar: #2c2c2c;
+  --type-scale: 1;
+
+  /* Movimiento: suave al llegar, sin rebotes bruscos */
+  --ease-out:  cubic-bezier(.22,.61,.36,1);
+  --ease-soft: cubic-bezier(.2,.8,.2,1);
+  --spring-bouncy: cubic-bezier(.34,1.45,.64,1);
+  --spring-smooth: cubic-bezier(.25,.9,.35,1);
+
+  /* Letra redondeada de Apple para la interfaz y los números; la normal
+     para los apuntes, que se leen mejor en párrafo. */
+  --font-ui:   ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+
+  --gutter: max(20px, calc((100% - 860px) / 2));
+  --board: min(80vw, 46vh, 560px);
+  --band: 16px;          /* franja de las coordenadas */
+  color-scheme: light;
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring-bouncy: linear(0, 0.042, 0.15, 0.294, 0.454, 0.612, 0.755, 0.877, 0.973, 1.044, 1.091, 1.117,
+      1.126, 1.123, 1.11, 1.092, 1.072, 1.052, 1.034, 1.018, 1.005, 0.996, 0.989, 0.986, 0.984, 0.984,
+      0.986, 0.988, 0.99, 0.993, 1);
+    --spring-smooth: linear(0, 0.042, 0.14, 0.263, 0.39, 0.511, 0.619, 0.711, 0.786, 0.846, 0.893, 0.928,
+      0.954, 0.973, 0.986, 0.994, 1, 1.003, 1.004, 1.005, 1.005, 1.005, 1.004, 1.003, 1);
+  }
+}
+
+:root[data-tone="dark"] {
+  --bg:        #151515;
+  --bg-clear:  rgba(21,21,21,0);
+  --surface:   #1e1e1e;
+  --surface-2: #272727;
+  --fill:      #242424;
+  --fill-2:    #303030;
+  --separator: #282828;
+  --overlay:   rgba(0,0,0,0.5);
+
+  --label:   #ececec;
+  --label-2: #9a9a9a;
+  --label-3: #5f5f5f;
+
+  --inverse:    #e6e6e6;
+  --on-inverse: #171717;
+  --thumb:      #3b3b3b;
+
+  --switch-off: #343434;
+  --switch-on:  #e6e6e6;
+  --knob-off:   #efefef;
+  --knob-on:    #1a1a1a;
+
+  /* Sobre fondo oscuro el rojo tiene que ser más luminoso para leerse */
+  --danger:      #ff6159;
+  --danger-fill: rgba(255,97,89,0.14);
+
+  /* De noche el tablero se apaga un poco: no deslumbra */
+  --sq-light: #cfcfcf;
+  --sq-dark:  #969696;
+  --coord:    #5f5f5f;
+  --eval-white: #e6e6e6;
+  --eval-black: #2a2a2a;
+  --eval-edge:  transparent;
+
+  --glass-tint:     rgba(58,58,58,0.42);
+  --glass-tint-2:   rgba(36,36,36,0.74);
+  --glass-rim-hi:   rgba(255,255,255,0.62);
+  --glass-rim-lo:   rgba(255,255,255,0.08);
+  --glass-edge:     rgba(255,255,255,0.07);
+  --glass-shadow:   0 8px 28px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.4);
+  --glass-glow:     rgba(255,255,255,0.32);
+  --glass-thumb:    #5c5c5c;
+  --glass-switch-on: #d4d4d4;
+  --glass-solid:    #262626;
+
+  --statusbar: transparent;
+  color-scheme: dark;
+}
+
+/* ============================================================
+   Paletas
+   Cada paleta es de tono claro u oscuro (data-tone, que decide el
+   cristal, la barra de estado y los interruptores) y aquí solo cambia
+   sus colores. Claro y Oscuro son los grises de base de arriba.
+   ============================================================ */
+
+/* Grafito: gris oscuro, sin llegar al negro */
+:root[data-theme="graphite"] {
+  --bg: #2a2a2c;  --bg-clear: rgba(42,42,44,0);
+  --surface: #343436;  --surface-2: #3d3d40;
+  --fill: #39393c;  --fill-2: #464649;  --separator: #3b3b3e;
+  --label: #f0f0f0;  --label-2: #a6a6aa;  --label-3: #74747a;
+  --inverse: #ececec;  --on-inverse: #2a2a2c;  --thumb: #4d4d51;
+  --switch-off: #49494c;  --knob-on: #2a2a2c;
+  --sq-light: #d6d6d6;  --sq-dark: #a0a0a0;  --coord: #74747a;
+  --eval-black: #1f1f21;
+  --glass-tint: rgba(84,84,88,0.42);  --glass-tint-2: rgba(52,52,55,0.8);
+  --glass-solid: #3a3a3d;  --glass-thumb: #67676c;
+}
+
+/* Niebla: gris medio, más suave que el claro */
+:root[data-theme="mist"] {
+  --bg: #e3e3e3;  --bg-clear: rgba(227,227,227,0);
+  --surface: #efefef;  --surface-2: #e6e6e6;
+  --fill: #d7d7d7;  --fill-2: #cbcbcb;  --separator: #dadada;
+  --label: #222222;  --label-2: #666666;  --label-3: #9a9a9a;
+  --inverse: #3a3a3a;  --on-inverse: #f2f2f2;  --thumb: #f6f6f6;
+  --switch-off: #cdcdcd;  --switch-on: #3a3a3a;
+  --sq-light: #e1e1e1;  --sq-dark: #a8a8a8;  --coord: #9a9a9a;
+  --eval-edge: #cfcfcf;
+  --glass-tint: rgba(246,246,246,0.5);  --glass-tint-2: rgba(236,236,236,0.82);
+  --glass-solid: #eaeaea;  --glass-switch-on: #3a3a3a;
+  --statusbar: #3a3a3a;
+}
+
+/* Papel: tono cálido, con tablero de madera clara */
+:root[data-theme="paper"] {
+  --bg: #f1ece2;  --bg-clear: rgba(241,236,226,0);
+  --surface: #faf7f0;  --surface-2: #f0eadd;
+  --fill: #e6dfd0;  --fill-2: #dad1bf;  --separator: #e7e0d2;
+  --label: #2f2a23;  --label-2: #7b7366;  --label-3: #ada392;
+  --inverse: #3d362c;  --on-inverse: #faf6ee;  --thumb: #fffdf7;
+  --switch-off: #ddd4c2;  --switch-on: #3d362c;
+  --sq-light: #eadbbd;  --sq-dark: #bf9f73;  --coord: #ada392;
+  --eval-white: #fbf8f2;  --eval-black: #3d362c;  --eval-edge: #dcd3c1;
+  --danger: #c23b2c;
+  --glass-tint: rgba(255,251,242,0.55);  --glass-tint-2: rgba(250,246,238,0.84);
+  --glass-solid: #f7f3ea;  --glass-thumb: #fffdf8;  --glass-switch-on: #3d362c;
+  --statusbar: #3d362c;
+}
+
+/* Azul noche: oscura, azulada */
+:root[data-theme="navy"] {
+  --bg: #111725;  --bg-clear: rgba(17,23,37,0);
+  --surface: #18202f;  --surface-2: #212a3b;
+  --fill: #1f2838;  --fill-2: #2a3446;  --separator: #222b3b;
+  --label: #e7ebf2;  --label-2: #8e9ab0;  --label-3: #56627a;
+  --inverse: #e2e7ef;  --on-inverse: #111725;  --thumb: #303b52;
+  --switch-off: #2c3649;  --switch-on: #e2e7ef;  --knob-on: #111725;
+  --sq-light: #c8d1de;  --sq-dark: #7d8ca4;  --coord: #56627a;
+  --eval-white: #e2e7ef;  --eval-black: #1c2333;
+  --glass-tint: rgba(56,72,104,0.42);  --glass-tint-2: rgba(28,36,54,0.8);
+  --glass-solid: #212b3e;  --glass-thumb: #45526d;  --glass-switch-on: #c8d1de;
+}
+
+/* Torneo: clara, con el tablero verde de siempre */
+:root[data-theme="forest"] {
+  --bg: #eef1ec;  --bg-clear: rgba(238,241,236,0);
+  --surface: #fbfcfa;  --surface-2: #e9ede6;
+  --fill: #e1e6dd;  --fill-2: #d3dacd;  --separator: #e2e7de;
+  --label: #1e261d;  --label-2: #66705f;  --label-3: #9ea795;
+  --inverse: #2f3a2c;  --on-inverse: #f5f8f2;  --thumb: #ffffff;
+  --switch-off: #d5dccf;  --switch-on: #5a7d45;
+  --sq-light: #ebecd0;  --sq-dark: #779556;  --coord: #9ea795;
+  --eval-black: #2f3a2c;  --eval-edge: #d3dacd;
+  --glass-tint: rgba(250,252,248,0.55);  --glass-tint-2: rgba(246,249,243,0.84);
+  --glass-solid: #f7f9f5;  --glass-switch-on: #5a7d45;
+  --statusbar: #2f3a2c;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Sin zoom al tocar dos veces, en ningún sitio. Se pone en cada elemento
+   porque iOS no lo hereda dentro de las zonas que se desplazan solas
+   (Ajustes, la partida, la lista). Los controles que se arrastran tienen
+   su propio valor más abajo. */
+:where(*) { touch-action: manipulation; }
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* Ningún botón deja seleccionar su texto, ni con pulsación larga ni
+   con doble toque, aunque esté dentro de una hoja con campos de texto. */
+button, button *, .segmented *, .switch * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; text-underline-offset: 2px; }
+svg { pointer-events: none; -webkit-user-drag: none; }
+
+html { font-size: calc(100% * var(--type-scale)); }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overscroll-behavior: none;
+  background: var(--bg);
+  color: var(--label);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .35s var(--ease-soft);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overflow: hidden;
+}
+
+/* Franja tras la barra de estado (solo se ve con la app instalada) */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top);
+  background: var(--statusbar);
+  z-index: 100;
+  pointer-events: none;
+}
+
+:focus-visible { outline: 2px solid var(--label-3); outline-offset: 2px; }
+
+/* display:flex en .view anula el hidden por defecto del navegador:
+   hay que devolvérselo explícitamente. */
+[hidden] { display: none !important; }
+
+/* ============================================================
+   Transiciones entre pantallas
+   ============================================================ */
+.view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+/* Sin la API de transiciones de vista, cada pantalla entra por su cuenta */
+.view:not([hidden]) { animation: viewEnter .34s var(--ease-soft) both; }
+:root.vt .view:not([hidden]) { animation: none; }
+@keyframes viewEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes viewEnterBack {
+  from { opacity: 0; transform: translateX(-24%); }
+  to   { opacity: 1; transform: none; }
+}
+/* Al volver con el gesto, la pantalla que entra llega desde la izquierda */
+body.nav-back .view:not([hidden]),
+:root.vt body.nav-back .view:not([hidden]) { animation: viewEnterBack .3s var(--ease-soft) both; }
+#analysisView, #settingsView { will-change: transform; }
+
+/* Con la API: la pantalla vieja se aparta un poco y se desvanece; la
+   nueva llega deslizándose desde el lado al que se va. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: .42s;
+  animation-timing-function: var(--ease-soft);
+}
+:root[data-nav="forward"]::view-transition-old(root) { animation-name: vtOutLeft; }
+:root[data-nav="forward"]::view-transition-new(root) { animation-name: vtInRight; }
+:root[data-nav="back"]::view-transition-old(root)    { animation-name: vtOutRight; }
+:root[data-nav="back"]::view-transition-new(root)    { animation-name: vtInLeft; }
+@keyframes vtInRight  { from { opacity: 0; transform: translateX(36px); } }
+@keyframes vtInLeft   { from { opacity: 0; transform: translateX(-36px); } }
+@keyframes vtOutLeft  { to   { opacity: 0; transform: translateX(-20px); } }
+@keyframes vtOutRight { to   { opacity: 0; transform: translateX(20px); } }
+
+/* ============================================================
+   Cabecera
+   ============================================================ */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px var(--gutter) 12px;
+  flex-shrink: 0;
+  background: var(--bg);
+  transition: background-color .35s var(--ease-soft);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+header h1 {
+  font-size: 1.95rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#analysisView h1, #settingsView h1 { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.005em; }
+
+.roundBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: var(--fill);
+  color: var(--label);
+  flex-shrink: 0;
+  transition: background .25s var(--ease-soft), transform .25s var(--ease-soft), color .25s var(--ease-soft);
+}
+.roundBtn svg { width: 18px; height: 18px; }
+.roundBtn:active { background: var(--fill-2); transform: scale(.93); }
+.roundBtn:disabled { opacity: 0.3; }
+#flipBtn svg { transition: transform .5s var(--ease-soft); }
+#flipBtn.active svg { transform: rotate(180deg); }
+
+.branchCreateBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 16px 0 13px;
+  border-radius: 20px;
+  border: none;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: background .25s var(--ease-soft), transform .25s var(--ease-soft);
+}
+.branchCreateBtn:active { background: var(--fill-2); transform: scale(.96); }
+.branchCreateIcon { display: flex; width: 17px; height: 17px; }
+.branchCreateIcon svg { width: 100%; height: 100%; }
+
+/* ============================================================
+   Inicio: buscador, carpetas y biblioteca
+   ============================================================ */
+#libraryTools {
+  flex-shrink: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 2px var(--gutter) 2px;
+}
+#searchWrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: var(--fill);
+  transition: background .25s var(--ease-soft);
+}
+#searchWrap:focus-within { background: var(--fill-2); }
+#searchIcon { display: flex; width: 16px; height: 16px; color: var(--label-3); flex-shrink: 0; }
+#searchIcon svg { width: 100%; height: 100%; }
+#searchInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--label);
+  font-size: 1rem;
+  font-family: var(--font-ui);
+  -webkit-appearance: none;
+  appearance: none;
+}
+#searchInput:focus { outline: none; }
+#searchInput::placeholder { color: var(--label-3); }
+#searchInput::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+#searchClearBtn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--label-3);
+  position: relative;
+}
+#searchClearBtn::before,
+#searchClearBtn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 1.8px;
+  background: var(--bg);
+  border-radius: 1px;
+}
+#searchClearBtn::before { transform: translate(-50%,-50%) rotate(45deg); }
+#searchClearBtn::after  { transform: translate(-50%,-50%) rotate(-45deg); }
+
+#sortSelect {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 14px;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  -webkit-appearance: none;
+  appearance: none;
+  text-align: center;
+}
+#sortSelect:focus { outline: none; }
+
+#searchStatus {
+  margin: 0;
+  padding: 0 var(--gutter) 10px;
+  font-size: 0.85rem;
+  color: var(--label-2);
+  flex-shrink: 0;
+}
+
+#folderChips {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 14px var(--gutter) 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+#folderChips::-webkit-scrollbar { display: none; }
+
+.folderChip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: none;
+  background: var(--fill);
+  color: var(--label-2);
+  font-size: 0.9rem;
+  font-weight: 550;
+  white-space: nowrap;
+  transition: background .3s var(--ease-soft), color .3s var(--ease-soft), transform .25s var(--ease-soft);
+}
+.folderChip:active { transform: scale(.95); }
+.folderChip.active { background: var(--inverse); color: var(--on-inverse); }
+.folderChipAdd { width: 36px; padding: 0; color: var(--label); }
+.folderChipAdd svg { width: 14px; height: 14px; }
+.folderChipDots { display: flex; width: 13px; height: 13px; opacity: 0.7; flex-shrink: 0; }
+.folderChipDots svg { width: 100%; height: 100%; }
+.chipSeparator {
+  flex-shrink: 0;
+  width: 1px;
+  height: 18px;
+  background: var(--fill-2);
+  align-self: center;
+  margin: 0 2px;
+}
+.tagChip { color: var(--label); }
+
+#libraryList {
+  flex-shrink: 0;
+  margin: 0 auto 28px;
+  width: calc(100% - 2 * var(--gutter));
+  max-width: 860px;
+  border-radius: 20px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.libraryRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  animation: rowEnter .45s var(--ease-soft) backwards;
+}
+.libraryRow.noEnter { animation: none; }
+@keyframes rowEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Separador interior: empieza donde empieza el texto, como en iOS */
+.libraryRow:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--separator);
+}
+.libraryRow:active { background: var(--surface-2); }
+
+.libraryInfo { flex: 1; min-width: 0; padding: 16px 0; }
+.libraryTitle {
+  font-size: 1.02rem;
+  font-weight: 550;
+  color: var(--label);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.libraryMeta {
+  margin-top: 3px;
+  font-size: 0.84rem;
+  color: var(--label-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.libraryTags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.libraryTag {
+  font-size: 0.76rem;
+  font-weight: 550;
+  color: var(--label-2);
+  background: var(--fill);
+  padding: 2px 9px;
+  border-radius: 10px;
+}
+
+/* El resultado, como se escribe en la planilla */
+.resultDot {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  font-weight: 650;
+  padding: 4px 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+.result-white { background: var(--inverse); color: var(--on-inverse); }
+.result-black { background: transparent; color: var(--label-2); border-color: var(--fill-2); }
+.result-draw  { background: var(--fill); color: var(--label); }
+
+/* Mantener pulsada una partida: se hunde poco a poco y, al abrirse sus
+   opciones, da un pequeño salto. */
+.libraryRow { cursor: pointer; transition: background .2s var(--ease-soft), transform .45s var(--ease-soft); }
+.libraryRow.holding { transform: scale(.975); background: var(--surface-2); transition-duration: .2s, .45s; }
+/* El salto va con transición y no con animación: así no se repite la
+   animación de entrada de la fila al terminar. */
+.libraryRow.held { transform: scale(1.015); transition: background .2s var(--ease-soft), transform .22s var(--spring-bouncy); }
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 44px 60px;
+  color: var(--label-2);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ============================================================
+   Ajustes
+   ============================================================ */
+#settingsContent {
+  flex: 1;
+  padding: 0 var(--gutter) 32px;
+}
+.settingsGroupLabel {
+  font-size: 0.88rem;
+  font-weight: 550;
+  color: var(--label-2);
+  margin: 26px 18px 9px;
+}
+.settingsList {
+  background: var(--surface);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.settingsRow {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 14px 18px;
+  border: none;
+  background: transparent;
+  color: var(--label);
+  text-align: left;
+  font-family: var(--font-ui);
+  transition: background .2s var(--ease-soft);
+}
+.settingsRow:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 56px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--separator);
+}
+button.settingsRow:active { background: var(--surface-2); }
+.settingsRow > .libraryTitle { flex: 1; min-width: 0; }
+.settingsRowIcon { flex-shrink: 0; width: 24px; height: 24px; color: var(--label-2); }
+.settingsRowIcon svg { width: 100%; height: 100%; }
+.settingsRowInfo { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.settingsRowInfo .libraryMeta { white-space: normal; line-height: 1.35; margin-top: 0; }
+.rowChevron { display: flex; width: 13px; height: 13px; color: var(--label-3); flex-shrink: 0; }
+.rowChevron svg { width: 100%; height: 100%; }
+
+.settingsStack { flex-direction: column; align-items: stretch; gap: 13px; }
+.settingsStackHead { display: flex; align-items: center; gap: 14px; }
+
+/* ---------- Paletas de colores ---------- */
+.themeSets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px;
+}
+.themeSet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 6px 9px;
+  border: none;
+  border-radius: 16px;
+  background: var(--fill);
+  color: var(--label-2);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: outline-color .3s var(--ease-soft), color .3s var(--ease-soft), transform .25s var(--ease-soft);
+}
+.themeSet:active { transform: scale(.96); }
+.themeSet.active { outline-color: var(--label); color: var(--label); }
+/* La muestra: el fondo de la paleta, una tarjeta y dos casillas */
+.themeSwatch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 40px;
+  padding: 0 8px;
+  border-radius: 11px;
+}
+.themeSwatchCard { flex: 1; height: 16px; border-radius: 6px; }
+.themeSwatchSq { width: 16px; height: 16px; border-radius: 3px; }
+.themeSetName { font-size: 0.8rem; font-weight: 550; }
+
+/* ---------- Diseños de piezas ---------- */
+.pieceSets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 10px;
+}
+.pieceSet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 6px 9px;
+  border: none;
+  border-radius: 16px;
+  background: var(--fill);
+  color: var(--label-2);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: outline-color .3s var(--ease-soft), color .3s var(--ease-soft), transform .25s var(--ease-soft);
+}
+.pieceSet:active { transform: scale(.96); }
+.pieceSet.active { outline-color: var(--label); color: var(--label); }
+.pieceSetTile { display: flex; border-radius: 7px; overflow: hidden; }
+.pieceSetSq { width: 34px; height: 34px; display: grid; place-items: center; }
+.pieceSetSq .piece { font-size: 26px; }
+.pieceSetImg { width: 88%; height: 88%; background: center / contain no-repeat; }
+.pieceSet.gray .pieceSetImg { filter: grayscale(1); }
+.pieceSetName { font-size: 0.8rem; font-weight: 550; }
+
+/* ---------- Control segmentado ---------- */
+/* La opción elegida es una pastilla clara que se desliza por debajo de
+   los textos (--seg-i dice cuál, --seg-n cuántas hay). Se puede tocar o
+   arrastrar: mientras se arrastra, la pastilla va pegada al dedo. */
+.segmented {
+  position: relative;
+  display: flex;
+  padding: 3px;
+  background: var(--fill);
+  border-radius: 13px;
+  isolation: isolate;
+}
+.segmented, .segmented * { touch-action: pan-y; }
+.segThumb {
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--seg-n, 2));
+  border-radius: 10px;
+  background: var(--thumb);
+  translate: calc(var(--seg-i, 0) * 100%) 0;
+  transition: translate .5s var(--spring-smooth), background .3s var(--ease-soft);
+  pointer-events: none;
+  opacity: 0;
+}
+.segmented.hasActive .segThumb { opacity: 1; }
+.segmented.dragging .segThumb { transition: translate .08s linear, background .3s var(--ease-soft); }
+.segmented button {
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  color: var(--label-2);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  transition: color .3s var(--ease-soft);
+}
+.segmented button.active,
+.segmented.dragging button.lit { color: var(--label); }
+.segmented.dragging button.active:not(.lit) { color: var(--label-2); }
+
+/* Notación: nombre claro y, debajo, las letras de sus piezas */
+.notationSeg button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 7px 4px;
+  line-height: 1.2;
+}
+.segTitle { font-size: 0.92rem; font-weight: 600; }
+.segSub { font-size: 0.7rem; font-weight: 550; letter-spacing: 0.14em; opacity: 0.7; }
+
+/* ---------- Interruptor ---------- */
+.switch {
+  flex-shrink: 0;
+  position: relative;
+  width: 51px;
+  height: 31px;
+  padding: 2px;
+  border-radius: 16px;
+  border: none;
+  background: var(--switch-off);
+  display: flex;
+  align-items: center;
+  transition: background .3s var(--ease-soft);
+}
+.switch, .switch * { touch-action: pan-y; }
+.switch span {
+  width: 27px;
+  height: 27px;
+  border-radius: 14px;
+  background: var(--knob-off);
+  transition: translate .45s var(--spring-smooth), background .3s var(--ease-soft);
+}
+.switch.on { background: var(--switch-on); }
+.switch.on span { translate: 20px 0; background: var(--knob-on); }
+.switch.dragging span { transition: background .3s var(--ease-soft); }
+
+/* ============================================================
+   Partida: tablero, tira de jugadas, ramificaciones y notas
+   ============================================================ */
+/* La cabecera y las flechas quedan fijas; solo se desplaza lo de en medio.
+   Así los controles nunca se van fuera de pantalla. */
+#analysisView { position: relative; overflow: hidden; }
+#analysisView header { position: relative; }
+#analysisScroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: contain;
+  padding-bottom: 6px;
+}
+
+#boardWrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 12px 0;
+}
+
+/* ---------- Barra de ventaja ---------- */
+/* La parte clara crece cuando ganan las blancas y la oscura cuando ganan
+   las negras. El número va en el lado del que va ganando. */
+#evalBar {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--board);
+  height: 20px;
+  margin: 0 0 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--eval-black);
+  outline: 1px solid var(--eval-edge);
+  outline-offset: -1px;
+}
+#evalFill {
+  position: absolute;
+  inset: 0;
+  background: var(--eval-white);
+  transform: scaleX(var(--eval-share, 0.5));
+  transform-origin: left center;
+  transition: transform .7s var(--spring-smooth);
+}
+#evalLabel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--eval-black);
+  transition: opacity .3s var(--ease-soft);
+}
+#evalBar.blackAhead #evalLabel { left: auto; right: 10px; color: var(--eval-white); }
+/* Mientras el motor arranca, la barra espera en el centro, apagada */
+#evalBar.pending #evalFill { opacity: 0.5; }
+#evalBar.pending #evalLabel { opacity: 0; }
+
+#boardFrame {
+  display: grid;
+  grid-template-columns: var(--band) var(--board) var(--band);
+  grid-template-rows: var(--band) var(--board) var(--band);
+}
+#boardFrame.no-coords { --band: 0px; }
+/* Editando una ramificación: un marco fino alrededor del tablero */
+#boardFrame #board { outline: 2px solid transparent; outline-offset: -2px; transition: outline-color .3s var(--ease-soft); }
+#boardFrame.branch-editing #board { outline-color: var(--label-2); }
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: var(--board);
+  height: var(--board);
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--sq-light);
+}
+
+.coordCorner { width: 100%; height: 100%; }
+.coordRow { display: flex; align-items: center; }
+.coordCol { display: flex; flex-direction: column; align-items: center; }
+.coordRow span, .coordCol span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--coord);
+}
+#boardFrame.no-coords .coordRow span,
+#boardFrame.no-coords .coordCol span { display: none; }
+
+.square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.light { background: var(--sq-light); }
+.dark  { background: var(--sq-dark); }
+
+/* Última jugada: un tono más oscuro que aparece despacio */
+.square.highlight-from::after,
+.square.highlight-to::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mark-to);
+  pointer-events: none;
+  animation: washIn .4s var(--ease-soft) both;
+}
+.square.highlight-from::after { background: var(--mark-from); }
+@keyframes washIn { from { opacity: 0; } to { opacity: 1; } }
+
+.square.selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mark-sel);
+  pointer-events: none;
+}
+
+.square.legal-move .legalDot {
+  position: absolute;
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: var(--legal);
+  pointer-events: none;
+  animation: dotPop .3s var(--ease-soft) both;
+}
+.square.legal-move.capture .legalDot {
+  width: 84%;
+  height: 84%;
+  background: transparent;
+  border: 4px solid var(--legal);
+}
+@keyframes dotPop {
+  from { opacity: 0; transform: scale(.5); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Piezas ---------- */
+.piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1; /* por encima de la marca de la última jugada */
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  font-family: "Segoe UI Symbol", "Noto Sans Symbols2", "Apple Symbols", system-ui, sans-serif;
+  color: #151515;
+  font-size: max(20px, min(7.4vw, 4.3vh, 52px));
+}
+/* Diseño tipográfico: un mismo glifo para los dos colores, con contorno */
+.white-piece {
+  filter:
+    invert(1)
+    drop-shadow(1.1px 0 0 #151515) drop-shadow(-1.1px 0 0 #151515)
+    drop-shadow(0 1.1px 0 #151515) drop-shadow(0 -1.1px 0 #151515)
+    drop-shadow(0.8px 0.8px 0 #151515) drop-shadow(-0.8px 0.8px 0 #151515)
+    drop-shadow(0.8px -0.8px 0 #151515) drop-shadow(-0.8px -0.8px 0 #151515);
+}
+.black-piece {
+  filter:
+    drop-shadow(1.1px 0 0 #fff) drop-shadow(-1.1px 0 0 #fff)
+    drop-shadow(0 1.1px 0 #fff) drop-shadow(0 -1.1px 0 #fff)
+    drop-shadow(0.8px 0.8px 0 #fff) drop-shadow(-0.8px 0.8px 0 #fff)
+    drop-shadow(0.8px -0.8px 0 #fff) drop-shadow(-0.8px -0.8px 0 #fff);
+}
+/* Diseños dibujados: el glifo se oculta y se pone el dibujo del diseño
+   elegido en Ajustes (las variables --piece-* las rellena la app). */
+.pieces-image :is(#board, .promoBtn) .piece {
+  color: transparent;
+  filter: none;
+  /* Propiedades sueltas, no la abreviada "background": esa borraría la
+     imagen que pone la regla de cada pieza. */
+  background-position: center;
+  background-size: 88%;
+  background-repeat: no-repeat;
+}
+.pieces-gray :is(#board, .promoBtn) .piece { filter: grayscale(1); }
+.piece[data-p="wK"] { background-image: var(--piece-wK); }
+.piece[data-p="wQ"] { background-image: var(--piece-wQ); }
+.piece[data-p="wR"] { background-image: var(--piece-wR); }
+.piece[data-p="wB"] { background-image: var(--piece-wB); }
+.piece[data-p="wN"] { background-image: var(--piece-wN); }
+.piece[data-p="wP"] { background-image: var(--piece-wP); }
+.piece[data-p="bK"] { background-image: var(--piece-bK); }
+.piece[data-p="bQ"] { background-image: var(--piece-bQ); }
+.piece[data-p="bR"] { background-image: var(--piece-bR); }
+.piece[data-p="bB"] { background-image: var(--piece-bB); }
+.piece[data-p="bN"] { background-image: var(--piece-bN); }
+.piece[data-p="bP"] { background-image: var(--piece-bP); }
+.pieceSet .piece { background-image: none; }
+/* La pieza que viaja pasa por encima del resto del tablero */
+.piece.traveling { z-index: 5; }
+
+#status {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  color: var(--label-3);
+  text-align: center;
+  min-height: 18px;
+}
+
+/* ---------- La rueda de jugadas ---------- */
+/* Lo memorable de la app: una rueda con la jugada actual en el centro y
+   las demás desvaneciéndose hacia los bordes. */
+#moveStrip {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px max(12px, calc((100% - 860px) / 2));
+  margin-top: 8px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+#moveStrip, #moveStrip * { touch-action: none; }
+
+/* La cápsula de detrás: en reposo abarca las cinco jugadas y al tocar la
+   rueda se estira hasta ocupar todo el ancho. */
+#stripTrack {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--surface);
+  transition: left .65s var(--spring-smooth), width .65s var(--spring-smooth), background .35s var(--ease-soft);
+  pointer-events: none;
+}
+#moveStripInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  will-change: transform;
+}
+
+.moveChip {
+  flex-shrink: 0;
+  position: relative;
+  min-width: 46px;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  color: var(--label-2);
+  white-space: nowrap;
+  transition: background .3s var(--ease-soft), color .3s var(--ease-soft), transform .4s var(--spring-smooth),
+              opacity .45s var(--ease-soft) var(--chip-delay, 0s);
+}
+/* En reposo: la actual entera y dos a cada lado, cada vez más tenues;
+   las demás se ocultan. Al desplegarse aparecen en onda (--chip-delay). */
+#moveStrip.collapsed .moveChip { opacity: 0; pointer-events: none; }
+#moveStrip.collapsed .moveChip[data-d="0"] { opacity: 1; pointer-events: auto; }
+#moveStrip.collapsed .moveChip[data-d="1"] { opacity: 0.5; pointer-events: auto; }
+#moveStrip.collapsed .moveChip[data-d="2"] { opacity: 0.2; pointer-events: auto; }
+.moveChip.current {
+  background: var(--inverse);
+  color: var(--on-inverse);
+  font-weight: 650;
+  transform: scale(1.06);
+}
+.moveChip.hasNote::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--label-2);
+}
+.moveChip.current.hasNote::after { background: var(--on-inverse); }
+.moveChip.hasBranch { outline: 1.5px solid var(--label-3); outline-offset: -1.5px; }
+.moveChip.hasBranch.current { outline-color: transparent; }
+.moveChip.branchMove { color: var(--label); font-style: italic; }
+.moveChip.branchMove.current { color: var(--on-inverse); }
+
+/* Rueda enganchada: manda sobre la partida. Se apagan las demás
+   jugadas y la actual se agranda: se ve al instante qué manda. */
+#moveStrip.scrubbing .moveChip { opacity: 0.3; }
+#moveStrip.scrubbing .moveChip.current { opacity: 1; transform: scale(1.14); }
+
+/* La lupa solo existe en la estética de cristal */
+#stripLens { display: none; }
+
+/* ---------- Ramificaciones ---------- */
+#branchAction {
+  flex-shrink: 0;
+  padding: 10px var(--gutter) 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  animation: viewEnter .35s var(--ease-soft) both;
+}
+.branchActionInfo { font-size: 0.88rem; line-height: 1.4; font-weight: 600; color: var(--label-2); }
+.branchActionInfo .branchHint { display: block; margin-top: 2px; font-weight: 500; color: var(--label-3); }
+.branchActionButtons { display: flex; gap: 8px; flex-wrap: wrap; }
+.branchActionBtn {
+  flex: 1;
+  min-width: 100px;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 22px;
+  border: none;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: background .25s var(--ease-soft), transform .25s var(--ease-soft), color .25s var(--ease-soft);
+}
+.branchActionBtn:active { background: var(--fill-2); transform: scale(.97); }
+.branchActionBtn.primary { background: var(--inverse); color: var(--on-inverse); }
+.branchActionBtn.full { flex: 1 1 100%; }
+.branchActionBtn.danger {
+  flex: 0 0 48px;
+  min-width: 48px;
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.branchActionBtn.danger svg { width: 17px; height: 17px; }
+.branchSiblingLabel { margin-top: 2px; font-size: 0.82rem; font-weight: 600; color: var(--label-3); }
+
+.branchPills { display: flex; flex-wrap: wrap; gap: 8px; }
+.branchPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 10px 0 13px;
+  border-radius: 20px;
+  border: none;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: background .25s var(--ease-soft), transform .25s var(--ease-soft), color .25s var(--ease-soft);
+}
+.branchPill:active { background: var(--inverse); color: var(--on-inverse); transform: scale(.97); }
+.branchPillIcon { display: flex; width: 16px; height: 16px; flex-shrink: 0; }
+.branchPillIcon svg { width: 100%; height: 100%; }
+.branchPillName { white-space: nowrap; }
+.branchPillChevron { display: flex; width: 13px; height: 13px; opacity: 0.5; flex-shrink: 0; }
+.branchPillChevron svg { width: 100%; height: 100%; }
+
+.branchNameBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 4px 10px 4px 8px;
+  margin: -4px 0 0 -8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--label);
+  font-size: 0.97rem;
+  font-weight: 600;
+  transition: background .2s var(--ease-soft);
+}
+.branchNameBtn:active:not(:disabled) { background: var(--fill); }
+.branchNameBtn:disabled { opacity: 1; cursor: default; }
+.branchNameIcon { display: flex; width: 15px; height: 15px; flex-shrink: 0; }
+.branchNameIcon svg { width: 100%; height: 100%; }
+.branchNamePencil { display: flex; width: 13px; height: 13px; color: var(--label-3); flex-shrink: 0; }
+.branchNamePencil svg { width: 100%; height: 100%; }
+
+/* ---------- Notas ---------- */
+#notesSection {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px 8px;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+#notesLabel {
+  font-size: 0.88rem;
+  font-weight: 550;
+  color: var(--label-2);
+  margin: 0 6px 9px;
+}
+#notesLabel .notesLabelMove { color: var(--label); font-weight: 650; font-variant-numeric: tabular-nums; }
+
+#notesArea {
+  flex: 1;
+  min-height: 96px;
+  width: 100%;
+  resize: none;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--label);
+  padding: 15px 18px;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.65;
+  transition: border-color .3s var(--ease-soft), background .35s var(--ease-soft);
+}
+#notesArea::placeholder { color: var(--label-3); }
+#notesArea:focus { outline: none; border-color: var(--fill-2); }
+
+/* ---------- Flechas e inicio ---------- */
+/* La barra de controles ocupa todo el ancho de la pantalla */
+#controls {
+  position: relative;
+  z-index: 4;
+  flex-shrink: 0;
+  width: 100%;
+  padding: 10px 12px 14px;
+}
+.controlsGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.controlsGroup button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 58px;
+  padding: 0;
+  border: none;
+  border-radius: 29px;
+  background: var(--fill);
+  color: var(--label);
+  touch-action: none;
+  transition: background .25s var(--ease-soft), transform .25s var(--ease-soft), opacity .3s var(--ease-soft);
+}
+/* El de volver al inicio es más estrecho: se usa menos que las flechas */
+.controlsGroup #startBtn { flex: 0 0 74px; }
+.controlsGroup button svg { width: 22px; height: 22px; }
+.controlsGroup #startBtn svg { width: 20px; height: 20px; }
+.controlsGroup button:active { background: var(--fill-2); transform: scale(.96); }
+.controlsGroup button:disabled { opacity: 0.3; }
+/* El gesto siempre lo recibe el botón, nunca el icono: así iOS no
+   intenta tratar el SVG como una imagen al mantener pulsado. */
+.controlsGroup button * { pointer-events: none; }
+
+/* ============================================================
+   Hojas inferiores
+   ============================================================ */
+.sheetOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: var(--overlay);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s var(--ease-soft);
+}
+.sheetOverlay.open { opacity: 1; pointer-events: auto; }
+#rowSheetOverlay { z-index: 22; }
+#branchNameSheetOverlay { z-index: 24; }
+#syncSheetOverlay { z-index: 26; }
+
+.sheetCard {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform .5s var(--spring-smooth);
+}
+.sheetOverlay.open .sheetCard { transform: translateY(0); }
+
+/* El tirador de las hojas de iOS */
+.sheetCard::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--fill-2);
+  margin: 0 auto 14px;
+}
+
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.sheetHeader h2 { font-size: 1.2rem; font-weight: 650; margin: 0; }
+.sheetHeader .roundBtn { width: 34px; height: 34px; }
+.sheetHeader .roundBtn svg { width: 14px; height: 14px; }
+
+.sheetScroll {
+  max-height: min(56vh, 480px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 14px;
+}
+
+.field {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 1rem;
+  font-family: var(--font-text);
+  transition: border-color .25s var(--ease-soft), background .25s var(--ease-soft);
+}
+.field::placeholder { color: var(--label-3); }
+.field:focus { outline: none; background: var(--surface-2); border-color: var(--fill-2); }
+select.field { -webkit-appearance: none; appearance: none; }
+
+.fieldPair { display: flex; gap: 10px; }
+.fieldPair .field { flex: 1; min-width: 0; }
+.fieldYear { flex: 0 0 96px !important; }
+.fieldLabel {
+  font-size: 0.86rem;
+  font-weight: 550;
+  color: var(--label-2);
+  margin: 8px 6px 8px;
+}
+#pgnLangSeg { margin-bottom: 10px; }
+#pgnInput {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  height: 132px;
+  resize: none;
+}
+.codeField {
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.moreFields {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 6px;
+  padding: 6px 6px;
+  border: none;
+  background: transparent;
+  color: var(--label-2);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.moreFieldsChevron {
+  display: flex;
+  width: 12px;
+  height: 12px;
+  transform: rotate(90deg);
+  transition: transform .35s var(--ease-soft);
+}
+.moreFields.open .moreFieldsChevron { transform: rotate(-90deg); }
+.moreFieldsChevron svg { width: 100%; height: 100%; }
+
+.primaryBtn {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  border: none;
+  border-radius: 27px;
+  background: var(--inverse);
+  color: var(--on-inverse);
+  font-size: 1.02rem;
+  font-weight: 650;
+  transition: transform .25s var(--ease-soft), opacity .25s var(--ease-soft);
+}
+.primaryBtn:active { transform: scale(.98); opacity: .88; }
+.primaryBtn:disabled { opacity: .5; }
+
+#rowSheetActions { display: flex; flex-direction: column; gap: 10px; }
+.sheetAction {
+  width: 100%;
+  min-height: 54px;
+  border: none;
+  border-radius: 18px;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background .2s var(--ease-soft), transform .25s var(--ease-soft);
+}
+.sheetAction:active { background: var(--fill-2); transform: scale(.98); }
+.sheetAction.danger { color: var(--danger); font-weight: 650; }
+.sheetAction.danger:active { background: var(--danger-fill); }
+
+.sheetHint {
+  margin: 0 0 14px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--label-2);
+}
+.sheetHint:empty { display: none; }
+.sheetError { color: var(--label); font-weight: 600; margin: 2px 0 12px; }
+
+/* ---------- Coronación ---------- */
+#promotionOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--overlay);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s var(--ease-soft);
+}
+#promotionOverlay.open { opacity: 1; pointer-events: auto; }
+#promotionCard {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  padding: 22px;
+  border-radius: 28px;
+  background: var(--surface);
+  text-align: center;
+  transform: scale(.94);
+  transition: transform .5s var(--spring-smooth);
+}
+#promotionOverlay.open #promotionCard { transform: scale(1); }
+#promotionLabel { margin: 0 0 16px; color: var(--label-2); font-size: 0.95rem; }
+#promotionChoices { display: flex; gap: 10px; justify-content: center; }
+.promoBtn {
+  width: 68px;
+  height: 68px;
+  padding: 0;
+  border-radius: 18px;
+  border: none;
+  background: var(--sq-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s var(--ease-soft), transform .25s var(--ease-soft);
+}
+.promoBtn:active { background: var(--sq-dark); transform: scale(.95); }
+.promoBtn .piece { font-size: 42px; }
+
+/* ============================================================
+   LIQUID GLASS
+   El cristal es para la capa de controles, nunca para el contenido:
+   botones de la cabecera, flechas, hojas, la lupa de la tira y las
+   piezas de los controles mientras se tocan.
+   ============================================================ */
+:root[data-look="glass"] {
+  --gutter: max(18px, calc((100% - 800px) / 2));
+}
+
+/* ---------- El material ---------- */
+:root[data-look="glass"] :is(.brand > .roundBtn, .headerActions, .controlsGroup, .sheetHeader .roundBtn) {
+  position: relative;
+  isolation: isolate;
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: blur(14px) saturate(1.8) brightness(1.04);
+  backdrop-filter: blur(14px) saturate(1.8) brightness(1.04);
+  box-shadow: var(--glass-shadow), inset 0 0 0 0.5px var(--glass-edge);
+}
+
+/* Brillo en el canto: la luz entra por arriba a la izquierda y sale
+   por abajo a la derecha, como en el cristal de iOS. */
+:root[data-look="glass"] :is(.brand > .roundBtn, .headerActions, .controlsGroup, .sheetHeader .roundBtn,
+                              #stripLens, #promotionCard, #stripTrack)::before,
+:root[data-look="glass"] .sheetCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,
+    var(--glass-rim-hi) 0%, var(--glass-rim-lo) 14%, transparent 32%,
+    transparent 68%, var(--glass-rim-lo) 86%, var(--glass-rim-hi) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+/* ---------- Respuesta al tacto ---------- */
+/* Crece con rebote y se ilumina desde el punto donde está el dedo. */
+:root[data-look="glass"] :is(.roundBtn, .headerActions, .controlsGroup, .branchCreateBtn, .primaryBtn,
+                              .switch, .segmented, .folderChip, .sheetAction, .promoBtn,
+                              .branchActionBtn, .branchPill) {
+  transition: transform .62s var(--spring-bouncy), translate .62s var(--spring-bouncy), background .2s var(--ease-out), opacity .2s;
+}
+:root[data-look="glass"] :is(.roundBtn, .headerActions, .controlsGroup, .branchCreateBtn, .primaryBtn,
+                              .folderChip, .sheetAction, .promoBtn, .branchActionBtn, .branchPill) {
+  position: relative;
+  isolation: isolate;
+}
+:root[data-look="glass"] :is(.roundBtn, .headerActions, .controlsGroup, .branchCreateBtn, .primaryBtn,
+                              .folderChip, .sheetAction, .promoBtn, .branchActionBtn, .branchPill)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--lg-x, 50%) var(--lg-y, 50%), var(--glass-glow), rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity .45s var(--ease-out);
+  pointer-events: none;
+}
+:root[data-look="glass"] .lg-press::after { opacity: 1; transition-duration: .08s; }
+:root[data-look="glass"] .lg-press {
+  transform: scale(1.12);
+  /* Pulsado, el cristal se deja llevar un poco hacia el dedo */
+  translate: var(--lg-dx, 0px) var(--lg-dy, 0px);
+  transition: transform .3s var(--spring-bouncy), translate .14s var(--ease-out), background .2s var(--ease-out), opacity .2s;
+}
+:root[data-look="glass"] :is(.headerActions, .controlsGroup).lg-press { transform: scale(1.05); }
+:root[data-look="glass"] :is(.primaryBtn, .sheetAction, .branchActionBtn, .segmented).lg-press { transform: scale(1.03); }
+:root[data-look="glass"] .roundBtn:active,
+:root[data-look="glass"] .branchCreateBtn:active,
+:root[data-look="glass"] .controlsGroup button:active,
+:root[data-look="glass"] .folderChip:active,
+:root[data-look="glass"] .sheetAction:active,
+:root[data-look="glass"] .branchActionBtn:active,
+:root[data-look="glass"] .primaryBtn:active,
+:root[data-look="glass"] .promoBtn:active,
+:root[data-look="glass"] .branchPill:active { transform: none; }
+:root[data-look="glass"] .lg-press:is(.roundBtn, .branchCreateBtn, .folderChip, .promoBtn, .branchPill) { transform: scale(1.12); }
+:root[data-look="glass"] .lg-press:is(.sheetAction, .branchActionBtn, .primaryBtn) { transform: scale(1.03); }
+
+/* ---------- Cabecera flotante ---------- */
+/* Sin fondo: el título y los botones flotan, y el contenido que pasa
+   por debajo se desvanece (el "scroll edge effect" de iOS 26). */
+:root[data-look="glass"] header {
+  background: linear-gradient(to bottom, var(--bg) 0%, var(--bg) 55%, var(--bg-clear) 100%);
+  padding-top: 10px;
+  padding-bottom: 16px;
+}
+:root[data-look="glass"] header h1 { font-size: 2.1rem; font-weight: 750; }
+:root[data-look="glass"] :is(#analysisView, #settingsView) h1 { font-size: 1.12rem; font-weight: 650; }
+:root[data-look="glass"] .roundBtn { width: 44px; height: 44px; background: transparent; }
+:root[data-look="glass"] .roundBtn svg { width: 19px; height: 19px; }
+:root[data-look="glass"] .headerActions { gap: 0; border-radius: 22px; padding: 0 2px; }
+:root[data-look="glass"] .headerActions .roundBtn { background: transparent; box-shadow: none; }
+:root[data-look="glass"] .headerActions .roundBtn.lg-press,
+:root[data-look="glass"] .headerActions .branchCreateBtn.lg-press { transform: none; }
+:root[data-look="glass"] .headerActions .roundBtn::after,
+:root[data-look="glass"] .headerActions .branchCreateBtn::after { display: none; }
+:root[data-look="glass"] .branchCreateBtn { height: 44px; background: transparent; padding: 0 14px 0 8px; }
+:root[data-look="glass"] #flipBtn.active { background: transparent; color: var(--label); }
+:root[data-look="glass"] #flipBtn.active svg { transform: rotate(180deg); }
+:root[data-look="glass"] #flipBtn svg { transition: transform .5s var(--spring-bouncy); }
+:root[data-look="glass"] .sheetHeader .roundBtn { width: 36px; height: 36px; }
+
+/* ---------- Contenido: formas redondeadas de iOS 26 ---------- */
+:root[data-look="glass"] #searchWrap,
+:root[data-look="glass"] #sortSelect { height: 42px; border-radius: 21px; }
+:root[data-look="glass"] .folderChip { height: 36px; border-radius: 18px; }
+:root[data-look="glass"] .folderChipAdd { width: 36px; }
+:root[data-look="glass"] #libraryList,
+:root[data-look="glass"] .settingsList { border-radius: 24px; }
+:root[data-look="glass"] .libraryRow { padding-left: 20px; }
+:root[data-look="glass"] .settingsRow { padding-left: 18px; padding-right: 18px; }
+:root[data-look="glass"] #notesArea { border-radius: 22px; padding: 14px 18px; }
+:root[data-look="glass"] .branchActionBtn,
+:root[data-look="glass"] .sheetAction,
+:root[data-look="glass"] .field { border-radius: 22px; }
+:root[data-look="glass"] #pgnInput { border-radius: 20px; }
+:root[data-look="glass"] .primaryBtn { min-height: 52px; border-radius: 26px; }
+:root[data-look="glass"] #board { border-radius: 10px; }
+:root[data-look="glass"] #moveStrip { border: none; padding-top: 10px; padding-bottom: 10px; }
+:root[data-look="glass"] .moveChip { border-radius: 999px; }
+:root[data-look="glass"] .moveChip.current {
+  background: var(--glass-thumb);
+  color: var(--label);
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 0.5px 1px rgba(0,0,0,0.1);
+}
+/* La cápsula de la rueda, de cristal. Va aparte de la lista del material
+   para no subir la prioridad de esa regla (lleva un id). Sombra corta:
+   la rueda recorta lo que sale de ella. */
+:root[data-look="glass"] #stripTrack {
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: blur(14px) saturate(1.8) brightness(1.04);
+  backdrop-filter: blur(14px) saturate(1.8) brightness(1.04);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1), inset 0 0 0 0.5px var(--glass-edge);
+}
+:root[data-look="glass"] .moveChip.current.hasNote::after { background: var(--label); }
+:root[data-look="glass"] .moveChip.branchMove.current { color: var(--label); }
+
+/* Prominente: el botón principal es cristal teñido del color de acento */
+:root[data-look="glass"] .primaryBtn {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.16), inset 0 1px 0.5px rgba(255,255,255,0.28),
+              inset 0 -1px 0.5px rgba(0,0,0,0.12);
+}
+
+/* ---------- Controles segmentados e interruptores ---------- */
+:root[data-look="glass"] .segmented { border-radius: 999px; padding: 3px; }
+:root[data-look="glass"] .segThumb {
+  border-radius: 999px;
+  background: var(--glass-thumb);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 0.5px 1px rgba(0,0,0,0.1);
+  transition: translate .5s var(--spring-bouncy), background .25s, box-shadow .25s, scale .5s var(--spring-bouncy);
+}
+:root[data-look="glass"] .segmented button { border-radius: 999px; }
+:root[data-look="glass"] .segmented button.active { color: var(--label); }
+/* Al tocarlo, la pastilla se vuelve una lente de cristal y se agranda */
+:root[data-look="glass"] .segmented.lg-press { transform: none; translate: none; }
+:root[data-look="glass"] .segmented.lg-press .segThumb {
+  scale: 1.1 1.18;
+  background: rgba(255,255,255,0.16);
+  -webkit-backdrop-filter: blur(2px) saturate(1.6);
+  backdrop-filter: blur(2px) saturate(1.6);
+  box-shadow: var(--glass-shadow), inset 0 0 0 1px var(--glass-rim-lo),
+              inset 1.5px 1.5px 1px -0.5px var(--glass-rim-hi), inset -1.5px -1.5px 1px -0.5px var(--glass-rim-hi);
+}
+
+/* Interruptor de iOS 26: más ancho y con la bola alargada */
+:root[data-look="glass"] .switch {
+  width: 63px;
+  height: 28px;
+  padding: 2px;
+  border-radius: 14px;
+  background: var(--switch-off);
+}
+:root[data-look="glass"] .switch.on { background: var(--glass-switch-on); }
+:root[data-look="glass"] .switch span {
+  width: 37px;
+  height: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.16), 0 0.5px 1px rgba(0,0,0,0.12);
+  transition: translate .55s var(--spring-bouncy), background .25s, box-shadow .25s, scale .5s var(--spring-bouncy);
+}
+:root[data-look="glass"] .switch.on span {
+  translate: 22px 0;
+  background: #ffffff;
+  box-shadow: 0 0 0 0.5px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.22);
+}
+/* Mientras se toca, la bola se convierte en cristal: se ve la pista a
+   través de ella, con el canto iluminado. */
+:root[data-look="glass"] .switch.lg-press { transform: none; translate: none; }
+:root[data-look="glass"] .switch.lg-press span {
+  scale: 1.32 1.38;
+  background: rgba(255,255,255,0.18);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.6) brightness(1.1);
+  backdrop-filter: blur(1.5px) saturate(1.6) brightness(1.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2), inset 0 0 0 1px var(--glass-rim-lo),
+              inset 1.5px 1.5px 1px -0.5px var(--glass-rim-hi), inset -1.5px -1.5px 1px -0.5px var(--glass-rim-hi);
+}
+
+/* ---------- Flechas: una cápsula de cristal flotante ---------- */
+:root[data-look="glass"] #analysisScroll { padding-bottom: 92px; }
+:root[data-look="glass"] #controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 12px 10px;
+  pointer-events: none;
+}
+/* El contenido se desvanece al pasar por debajo de la cápsula */
+:root[data-look="glass"] #controls::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 112px;
+  background: linear-gradient(to top, var(--bg) 30%, var(--bg-clear));
+  pointer-events: none;
+  z-index: -1;
+}
+:root[data-look="glass"] .controlsGroup {
+  pointer-events: auto;
+  gap: 0;
+  height: 64px;
+  padding: 0 4px;
+  border-radius: 32px;
+}
+:root[data-look="glass"] .controlsGroup button {
+  height: 56px;
+  background: transparent;
+  border-radius: 28px;
+}
+:root[data-look="glass"] .controlsGroup button:active { background: var(--fill); }
+
+/* ---------- La lupa de la tira ---------- */
+:root[data-look="glass"] #stripLens {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 92px;
+  height: 42px;
+  margin: -21px 0 0 -46px;
+  border-radius: 21px;
+  overflow: hidden;
+  background: var(--glass-solid);
+  box-shadow: var(--glass-shadow), inset 0 0 0 0.5px var(--glass-edge);
+  opacity: 0;
+  transform: scale(.55);
+  transition: opacity .18s var(--ease-out), transform .45s var(--spring-bouncy);
+  pointer-events: none;
+}
+:root[data-look="glass"] #stripLens.open { opacity: 1; transform: scale(1); }
+/* Brillo superior, como una gota */
+:root[data-look="glass"] #stripLens::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 70% at 30% 0%, rgba(255,255,255,0.22), rgba(255,255,255,0) 60%),
+    linear-gradient(to bottom, var(--glass-tint), rgba(255,255,255,0));
+  pointer-events: none;
+}
+#stripLensZoom {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.32);
+  transform-origin: 50% 50%;
+}
+#stripLensInner {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  will-change: transform;
+}
+#stripLensInner .moveChip,
+:root[data-look="glass"] #moveStrip.scrubbing #stripLensInner .moveChip {
+  background: transparent;
+  color: var(--label);
+  font-weight: 600;
+  transform: none;
+  opacity: 1;
+  outline: none;
+}
+#stripLensInner .moveChip::after { display: none; }
+
+/* ---------- Hojas: cristal grueso flotando sobre la pantalla ---------- */
+:root[data-look="glass"] .sheetOverlay { background: rgba(0,0,0,0.22); }
+:root[data-look="glass"][data-tone="light"] .sheetOverlay { background: rgba(0,0,0,0.12); }
+:root[data-look="glass"] .sheetCard {
+  margin: 0 8px 8px;
+  width: calc(100% - 16px);
+  border-radius: 34px;
+  padding: 10px 20px max(22px, calc(env(safe-area-inset-bottom) - 2px));
+  background: var(--glass-tint-2);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.3), inset 0 0 0 0.5px var(--glass-edge);
+  transform: translateY(calc(100% + 16px));
+}
+:root[data-look="glass"] .sheetOverlay.open .sheetCard { transform: translateY(0); }
+:root[data-look="glass"] .sheetCard::before { margin-bottom: 10px; }
+:root[data-look="glass"] .sheetCard .field,
+:root[data-look="glass"] .sheetCard .sheetAction { background: var(--fill); }
+
+:root[data-look="glass"] #promotionOverlay { background: rgba(0,0,0,0.22); }
+:root[data-look="glass"] #promotionCard {
+  border-radius: 34px;
+  background: var(--glass-tint-2);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.3), inset 0 0 0 0.5px var(--glass-edge);
+}
+:root[data-look="glass"] .promoBtn { border-radius: 20px; }
+
+/* Quien pide menos transparencia en el sistema tiene cristal opaco */
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-look="glass"] :is(.brand > .roundBtn, .headerActions, .controlsGroup, .sheetHeader .roundBtn,
+                                .sheetCard, #promotionCard) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--surface);
+  }
+}
+
+
+/* ============================================================
+   Aviso para instalar la app (solo dentro de Safari)
+   Abierta desde el icono de la pantalla de inicio, la app ocupa toda
+   la pantalla y solo se ve la barra de estado. Dentro de Safari no se
+   pueden quitar sus barras, así que se explica cómo instalarla.
+   ============================================================ */
+#installHint {
+  margin: 4px var(--gutter) 22px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: var(--surface);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  animation: viewEnter .45s var(--ease-soft) both;
+}
+#installHintIcon { flex-shrink: 0; width: 24px; height: 24px; color: var(--label-2); margin-top: 1px; }
+#installHintIcon svg { width: 100%; height: 100%; }
+#installHintText { flex: 1; min-width: 0; }
+#installHintText strong { display: block; font-size: 1rem; font-weight: 650; margin-bottom: 3px; }
+#installHintText p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--label-2); }
+#installHintClose { width: 32px; height: 32px; }
+#installHintClose svg { width: 13px; height: 13px; }
+
+/* ============================================================
+   Accesibilidad: sin movimiento
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+/* ============================================================
+   Pantallas pequeñas (iPhone)
+   La app está pensada para iPad, pero en el móvil tiene que caber
+   sin apreturas: tablero algo menor y controles más ajustados.
+   ============================================================ */
+@media (max-width: 500px) {
+  :root { --gutter: 16px; --board: min(78vw, 40vh, 400px); --band: 14px; }
+  header h1 { font-size: 1.8rem; }
+  :root[data-look="glass"] header h1 { font-size: 1.9rem; }
+
+  #boardWrap { padding: 4px 8px 0; }
+  .piece { font-size: max(17px, min(7vw, 3.9vh, 37px)); }
+  .coordRow span, .coordCol span { font-size: 0.56rem; }
+
+  #status { margin-top: 6px; font-size: 0.74rem; }
+  #moveStrip { margin-top: 6px; padding: 8px 12px; }
+  .moveChip { min-width: 42px; padding: 7px 10px; font-size: 0.88rem; }
+
+  #branchAction { gap: 7px; }
+  .branchActionBtn { height: 42px; font-size: 0.88rem; min-width: 88px; }
+  .branchHint { display: none; }
+
+  #notesSection { padding: 8px 14px 4px; }
+  #notesArea { font-size: 0.97rem; }
+
+  #controls { padding: 8px 10px 12px; }
+  .controlsGroup { gap: 8px; }
+  .controlsGroup button { height: 54px; }
+  .controlsGroup #startBtn { flex-basis: 66px; }
+
+  .libraryRow { padding: 0 16px; }
+  .libraryRow:not(:last-child)::after { left: 16px; }
+  .libraryInfo { padding: 14px 0; }
+  .fieldPair { flex-direction: column; gap: 0; }
+  .fieldYear { flex: 1 1 auto !important; }
+  .pieceSets { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; }
+  .pieceSetSq { width: 30px; height: 30px; }
+}
+
+/* Pantallas muy bajas (iPhone pequeño, o con el teclado abierto):
+   el tablero cede espacio antes que nada, pero nunca desaparece. */
+@media (max-height: 700px) {
+  :root { --board: min(66vw, 35vh, 340px); --band: 12px; }
+  .piece { font-size: max(15px, min(6vw, 3.4vh, 32px)); }
+  /* Con tan poco alto, el contador sobra: la rueda ya dice dónde estás. */
+  #status { display: none; }
+  #moveStrip { margin-top: 5px; }
+}
+
+/* En el móvil más estrecho el botón de ramificar cede la etiqueta */
+@media (max-width: 340px) {
+  .branchCreateLabel { display: none; }
+  .branchCreateBtn { width: 40px; padding: 0; justify-content: center; }
+}
+
+/* ============================================================
+   HORIZONTAL: aprovechar el ancho (el iPad apaisado, en clase)
+   El tablero va a la izquierda y la rueda con los apuntes a la
+   derecha; la biblioteca y los ajustes se reparten en dos columnas.
+   ============================================================ */
+@media (orientation: landscape) and (min-width: 700px) {
+  /* El margen es el mismo en las dos estéticas: así la cabecera, el
+     buscador y la lista quedan alineados de lado a lado. */
+  :root, :root[data-look="glass"] { --gutter: 28px; }
+  /* Sin la barra de ventaja encima, el tablero gana todo ese alto */
+  :root { --board: min(48vw, 65vh, 640px); --band: 15px; }
+  header { padding-top: 10px; padding-bottom: 8px; }
+
+  #analysisScroll {
+    display: grid;
+    grid-template-columns: auto minmax(260px, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 22px;
+    align-content: start;
+    padding-right: 20px;
+  }
+  #boardWrap {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: center;
+    padding: 10px 6px 10px 16px;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 12px;
+    align-items: center;
+    justify-content: center;
+  }
+  #boardFrame { grid-column: 2; grid-row: 1; }
+  #status { grid-column: 1 / -1; grid-row: 2; }
+
+  /* La barra de ventaja se pone de pie al lado del tablero, tan alta como
+     él: las blancas suben desde su lado (abajo, o arriba si se gira). */
+  #evalBar {
+    grid-column: 1;
+    grid-row: 1;
+    width: 30px;
+    height: var(--board);
+    margin: 0;
+    border-radius: 15px;
+  }
+  #evalFill { transform: scaleY(var(--eval-share, 0.5)); transform-origin: center bottom; }
+  #evalBar.flipped #evalFill { transform-origin: center top; }
+  #evalLabel,
+  #evalBar.blackAhead #evalLabel {
+    left: 0;
+    right: 0;
+    justify-content: center;
+    font-size: 0.6rem;
+    letter-spacing: -0.02em;
+  }
+  #evalLabel { top: auto; bottom: 8px; }
+  #evalBar.blackAhead #evalLabel,
+  #evalBar.flipped #evalLabel { top: 8px; bottom: auto; }
+  #evalBar.flipped.blackAhead #evalLabel { top: auto; bottom: 8px; }
+  .piece { font-size: max(18px, min(4.9vw, 6.3vh, 62px)); }
+
+  #moveStrip {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 14px;
+    padding: 10px 8px;
+  }
+  #branchAction { grid-column: 2; grid-row: 2; padding: 12px 0; }
+  #notesSection { grid-column: 2; grid-row: 3; padding: 4px 0 12px; min-height: 180px; max-width: none; }
+
+  /* Inicio: dos columnas de partidas */
+  #libraryList {
+    width: calc(100% - 2 * var(--gutter));
+    max-width: none;
+    background: transparent;
+    border-radius: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    align-content: start;
+    overflow: visible;
+  }
+  .libraryRow { background: var(--surface); border-radius: 20px; padding: 0 20px; }
+  .libraryRow:not(:last-child)::after { display: none; }
+  .libraryRow:active { background: var(--surface-2); }
+  :root[data-look="glass"] #libraryList { border-radius: 0; }
+  :root[data-look="glass"] .libraryRow { border-radius: 24px; }
+
+  /* Ajustes: todo a la vista, en dos columnas que empiezan a la vez */
+  #settingsContent { columns: 2; column-gap: 24px; }
+  .settingsGroup { break-inside: avoid; -webkit-column-break-inside: avoid; display: block; margin-bottom: 20px; }
+  .settingsGroupLabel { margin-top: 4px; }
+
+  /* Partida: flechas de extremo a extremo, al alcance de cada pulgar
+     con el iPad apaisado, también en la estética de cristal */
+  #controls { padding: 8px 12px 12px; }
+  .controlsGroup button { height: 62px; border-radius: 31px; }
+  .controlsGroup button svg { width: 26px; height: 26px; }
+  :root[data-look="glass"] #controls { padding: 0 12px 10px; }
+}
